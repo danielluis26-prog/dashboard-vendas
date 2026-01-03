@@ -1,16 +1,22 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-
-st.set_page_config(layout="wide", page_title="Dashboard de Vendas")
+from streamlit_gsheets import GSheetsConnection
 
 @st.cache_data
 def load_data():
-    arquivo = 'Vendas.xlsx'
-    df_vendas = pd.read_excel(arquivo, sheet_name='Lançamento Diário')
-    df_metas = pd.read_excel(arquivo, sheet_name='Metas')
+    # Cria a conexão com o Google Sheets
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    
+    # IMPORTANTE: Coloque aqui o link que você copiou do seu Google Sheets
+    url = "https://docs.google.com/spreadsheets/d/1KeeAFVOjg59JhODe4maqMEyQiyyXa8xSsxSuKTN1wB8/edit?usp=sharing"
+    
+    # Lê as abas específicas (os nomes devem ser iguais aos do seu arquivo)
+    df_vendas = conn.read(spreadsheet=url, worksheet="Lançamento Diário")
+    df_metas = conn.read(spreadsheet=url, worksheet="Metas")
 
+    # --- O restante do código de limpeza de dados continua IGUAL ao anterior ---
+    # (Tratamento de Datas, conversão numérica, etc.)
+    return df_vendas, df_metas
     # Tratamento de dados baseado nas colunas reais
     df_vendas['Data'] = pd.to_datetime(df_vendas['Data'])
     df_vendas['Faturamento Bruto'] = pd.to_numeric(df_vendas['Faturamento Bruto'], errors='coerce').fillna(0)
@@ -78,4 +84,5 @@ try:
             st.warning("Meta não cadastrada para este mês.")
 
 except Exception as e:
+
     st.error(f"Erro ao carregar dados: {e}")
