@@ -17,7 +17,7 @@ def load_data():
     # URL da sua planilha (Certifique-se de que é o link correto do seu Google Sheets)
     url = "https://docs.google.com/spreadsheets/d/1KeeAFVOjg59JhODe4maqMEyQiyyXa8xSsxSuKTN1wB8/edit?usp=sharing"
     
-    df_vendas = conn.read(spreadsheet=url, worksheet="Lançamento Diário")
+    df_vendas = conn.read(spreadsheet=url, worksheet="Vendas")
     df_metas = conn.read(spreadsheet=url, worksheet="Metas")
 
     # Limpeza de nomes de colunas
@@ -108,5 +108,6 @@ try:
 
 except Exception as e:
     st.error(f"Erro ao processar dados: {e}")
+
 
 
