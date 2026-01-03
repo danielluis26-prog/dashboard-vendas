@@ -2,11 +2,11 @@ import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 
-@st.cache_data
+# O número 300 significa 300 segundos (5 minutos). 
+# Assim, a cada 5 minutos o dashboard se atualiza sozinho se houver dados novos.
+@st.cache_data(ttl=300) 
 def load_data():
-    # Cria a conexão com o Google Sheets
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    
+    conn = st.connection("gsheets", type=GSheetsConnection)  
     # IMPORTANTE: Coloque aqui o link que você copiou do seu Google Sheets
     url = "https://docs.google.com/spreadsheets/d/1KeeAFVOjg59JhODe4maqMEyQiyyXa8xSsxSuKTN1wB8/edit?usp=sharing"
     
@@ -86,3 +86,4 @@ try:
 except Exception as e:
 
     st.error(f"Erro ao carregar dados: {e}")
+
