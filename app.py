@@ -15,7 +15,7 @@ def load_data():
     conn = st.connection("gsheets", type=GSheetsConnection)
     
     # URL da sua planilha (Certifique-se de que é o link correto do seu Google Sheets)
-    url = "COLE_AQUI_O_LINK_DA_SUA_PLANILHA"
+    url = "https://docs.google.com/spreadsheets/d/1KeeAFVOjg59JhODe4maqMEyQiyyXa8xSsxSuKTN1wB8/edit?usp=sharing"
     
     df_vendas = conn.read(spreadsheet=url, worksheet="Lançamento Diário")
     df_metas = conn.read(spreadsheet=url, worksheet="Metas")
@@ -108,3 +108,4 @@ try:
 
 except Exception as e:
     st.error(f"Erro ao processar dados: {e}")
+
