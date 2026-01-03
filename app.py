@@ -7,7 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # 1. Configuração da Página
-st.set_page_config(layout="wide", page_title="Dashboard de Vendas v5.0")
+st.set_page_config(layout="wide", page_title="Dashboard de Vendas Loja Vitasol v5.0")
 
 # 2. Função de Carregamento com CACHE (TTL de 10 minutos)
 @st.cache_data(ttl=600)
@@ -108,4 +108,5 @@ try:
 
 except Exception as e:
     st.error(f"Erro ao processar dados: {e}")
+
 
