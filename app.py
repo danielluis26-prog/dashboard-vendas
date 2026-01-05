@@ -14,26 +14,31 @@ st.set_page_config(layout="wide", page_title="Dashboard de Vendas Loja Vitasol v
 def load_data():
     conn = st.connection("gsheets", type=GSheetsConnection)
     
-    # URL da sua planilha (Certifique-se de que é o link correto do seu Google Sheets)
+    # URL limpa
     url = "https://docs.google.com/spreadsheets/d/1KeeAFVOjg59JhODe4maqMEyQiyyXa8xSsxSuKTN1wB8/edit#gid=0".strip()
     
+    # Lendo as abas - Use nomes simples e sem espaços
+    # Verifique se no Google Sheets está EXATAMENTE "Vendas" e "Metas"
     df_vendas = conn.read(spreadsheet=url, worksheet="Vendas")
     df_metas = conn.read(spreadsheet=url, worksheet="Metas")
 
-    # Limpeza de nomes de colunas
-    df_vendas.columns = [c.strip() for c in df_vendas.columns]
-    df_metas.columns = [c.strip() for c in df_metas.columns]
+    # Limpeza extra: Garante que os nomes das colunas não tenham espaços invisíveis
+    df_vendas.columns = [str(c).strip() for c in df_vendas.columns]
+    df_metas.columns = [str(c).strip() for c in df_metas.columns]
 
-    # Conversão de tipos para evitar erros nos KPIs
-    df_vendas['Data'] = pd.to_datetime(df_vendas['Data'])
+    # Conversão de tipos (essencial para não dar erro nos gráficos)
+    df_vendas['Data'] = pd.to_datetime(df_vendas['Data'], errors='coerce')
     df_vendas['Faturamento Bruto'] = pd.to_numeric(df_vendas['Faturamento Bruto'], errors='coerce').fillna(0)
     df_vendas['N° de Clientes'] = pd.to_numeric(df_vendas['N° de Clientes'], errors='coerce').fillna(0)
     df_metas['Valor da Meta'] = pd.to_numeric(df_metas['Valor da Meta'], errors='coerce').fillna(0)
 
-    # Mapa para cruzar meses texto (metas) com número (vendas)
+    # Mapa de meses
     mes_map = {'jan': 1, 'fev': 2, 'mar': 3, 'abr': 4, 'mai': 5, 'jun': 6,
                'jul': 7, 'ago': 8, 'set': 9, 'out': 10, 'nov': 11, 'dez': 12}
-    df_metas['Mes_Num'] = df_metas['Mês'].str.lower().str.strip().map(mes_map)
+    
+    # Garante que a coluna 'Mês' existe antes de mapear
+    if 'Mês' in df_metas.columns:
+        df_metas['Mes_Num'] = df_metas['Mês'].str.lower().str.strip().map(mes_map)
     
     return df_vendas, df_metas, datetime.now(pytz.timezone('America/Sao_Paulo'))
 
@@ -108,6 +113,7 @@ try:
 
 except Exception as e:
     st.error(f"Erro ao processar dados: {e}")
+
 
 
 
